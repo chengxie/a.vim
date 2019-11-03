@@ -629,11 +629,13 @@ function! NextAlternate(bang)
    endif
 endfunction
 
-comm! -nargs=? -bang A call AlternateFile("n<bang>", <f-args>)
-comm! -nargs=? -bang AS call AlternateFile("h<bang>", <f-args>)
-comm! -nargs=? -bang AV call AlternateFile("v<bang>", <f-args>)
-comm! -nargs=? -bang AT call AlternateFile("t<bang>", <f-args>)
-comm! -nargs=? -bang AN call NextAlternate("<bang>")
+comm! -nargs=? -bang A      call AlternateFile("n<bang>", <f-args>)
+comm! -nargs=? -bang ASA    call AlternateFile("a<bang>", <f-args>)
+comm! -nargs=? -bang ASB    call AlternateFile("b<bang>", <f-args>)
+comm! -nargs=? -bang AVL    call AlternateFile("l<bang>", <f-args>)
+comm! -nargs=? -bang AVR    call AlternateFile("r<bang>", <f-args>)
+comm! -nargs=? -bang AT     call AlternateFile("t<bang>", <f-args>)
+comm! -nargs=? -bang AN     call NextAlternate("<bang>")
 
 " Function : BufferOrFileExists (PRIVATE)
 " Purpose  : determines if a buffer or a readable file exists
@@ -739,12 +741,18 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
   let splitType = a:doSplit[0]
   let bang = a:doSplit[1]
   if (bufNr == -1)
+     "如果是新开文件，则不允许使用bang！
+     let bang = ''
      " Buffer did not exist....create it
      let v:errmsg=""
-     if (splitType == "h")
-        silent! execute ":split".bang." " . FILENAME
-     elseif (splitType == "v")
-        silent! execute ":vsplit".bang." " . FILENAME
+     if (splitType == "a")
+        silent! execute ":abo split".bang." " . FILENAME
+     elseif (splitType == "b")
+        silent! execute ":bel split".bang." " . FILENAME
+     elseif (splitType == "l")
+        silent! execute ":lefta vsplit".bang." " . FILENAME
+     elseif (splitType == "r")
+        silent! execute ":rightb vsplit".bang." " . FILENAME
      elseif (splitType == "t")
         silent! execute ":tab split".bang." " . FILENAME
      else
@@ -786,10 +794,14 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
      if (bufWindow == -1) 
         " Buffer was not in a window so open one
         let v:errmsg=""
-        if (splitType == "h")
-           silent! execute ":sbuffer".bang." " . FILENAME
-        elseif (splitType == "v")
-           silent! execute ":vert sbuffer " . FILENAME
+        if (splitType == "a")
+           silent! execute ":abo sbuffer".bang." " . FILENAME
+        elseif (splitType == "b")
+           silent! execute ":bel sbuffer".bang." " . FILENAME
+        elseif (splitType == "l")
+           silent! execute ":lefta vert sbuffer " . FILENAME
+        elseif (splitType == "r")
+           silent! execute ":rightb vert sbuffer " . FILENAME
         elseif (splitType == "t")
            silent! execute ":tab sbuffer " . FILENAME
         else
@@ -804,10 +816,14 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
         if (bufWindow != winnr()) 
            " something wierd happened...open the buffer
            let v:errmsg=""
-           if (splitType == "h")
-              silent! execute ":split".bang." " . FILENAME
-           elseif (splitType == "v")
-              silent! execute ":vsplit".bang." " . FILENAME
+           if (splitType == "a")
+              silent! execute ":abo split".bang." " . FILENAME
+           elseif (splitType == "b")
+              silent! execute ":bel split".bang." " . FILENAME
+           elseif (splitType == "l")
+              silent! execute ":lefta vsplit".bang." " . FILENAME
+           elseif (splitType == "r")
+              silent! execute ":rightb vsplit".bang." " . FILENAME
            elseif (splitType == "t")
               silent! execute ":tab split".bang." " . FILENAME
            else
